@@ -63,7 +63,7 @@ function AdminAccountDetails() {
                             <div className='w-1/2'>
                                 <label htmlFor="" className="input-title2">Password</label>
                                 <div className="relative">
-                                    <input type="password" name="" className="relative input_box2 placeholder:text-[#94A3B8] placeholder:text-base" placeholder='Enter Your password' required />
+                                    <input type="password" name="" className="relative input_box2 placeholder:text-[#94A3B8] placeholder:text-base" placeholder='**** **** ****' disabled />
                                     <span onClick={() => setChangePassword(true)} className='absolute right-6 top-1/2 -translate-y-1/2 text-[#29A073] text-base font-extrabold cursor-pointer'>Change password</span>
                                 </div>
                             </div>
