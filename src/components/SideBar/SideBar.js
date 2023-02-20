@@ -51,6 +51,10 @@ const handleLogout = () => {
 useEffect(() => {
 		getCardDetails();
 }, []);
+const logout = ()=>{
+	 navigator('./')
+	 localStorage.clear();
+}
 	return (
 		<div className="main flex min-h-screen bg-white">
 			{/* <!-- Left Panel --> */}
@@ -88,7 +92,7 @@ useEffect(() => {
 						</Link>
 						<button onClick={handleLogout} className="SideLink w-full flex items-center rounded-lg px-[18px] py-3.5 text-lightGray">
 							<img src={LogoutIcon} alt="DashboardIcon" />
-							<span className="text-sm font-bold leading-5 pl-[13px]">Logout</span>
+							<span className="text-sm font-bold leading-5 pl-[13px]" >Logout</span>
 						</button>
 					</div>
 				</div>
