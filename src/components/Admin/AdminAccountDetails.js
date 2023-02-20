@@ -16,17 +16,17 @@ function AdminAccountDetails() {
         'Authorization': `Bearer ${token}`,
     }
 
-    const getCardDetails = async () => {
+    const getAccountDetails = async () => {
         try {
             const response = await axios.get(`${baseurl}/api/user/user-profile/`, { headers: header });
-            console.log("RESPONSE>>>", response.data.data);
-            setDetails(response.data.data)
+            console.log("RESPONSE>>>", response.data.Data);
+            setDetails(response.data.Data)
         } catch (error) {
             console.log(error);
         }
     }
     useEffect(() => {
-        getCardDetails();
+        getAccountDetails();
     }, []);
     return (
         <div className="wrapper min-h-full">
