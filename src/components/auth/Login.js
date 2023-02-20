@@ -25,9 +25,7 @@ const Login = () => {
 			
             if(response.data?.status){
                 // localStorage.clear();
-               
-                sessionStorage.setItem("Token", response.data?.token.access);
-                localStorage.setItem("Token", response.data?.token.access);
+                localStorage.setItem("Token", response.data?.token);
                
 
                 navigate("../dashboard")
