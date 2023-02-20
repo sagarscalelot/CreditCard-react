@@ -33,9 +33,8 @@ function SideBar() {
 	
 	const getCardDetails = async () => {
 		try {
-				const response = await axios.get(`${baseurl}/api/user/user-profile/`, { headers: header });
-				console.log("RESPONSE>>>", response.data.data);
-				setDetails(response.data.data)
+				const response = await axios.get(`${baseurl}/api/user/admin-profile/`, { headers: header });
+				setDetails(response.data.Data)
 		} catch (error) {
 				console.log(error);
 		}
@@ -43,6 +42,10 @@ function SideBar() {
 useEffect(() => {
 		getCardDetails();
 }, []);
+const logout = ()=>{
+	 navigator('./')
+	 localStorage.clear();
+}
 	return (
 		<div className="main flex min-h-screen bg-white">
 			{/* <!-- Left Panel --> */}
@@ -78,9 +81,9 @@ useEffect(() => {
 							<img src={HelpIcon} alt="DashboardIcon" />
 							<span className="text-sm font-bold leading-5 pl-[13px]">Help</span>
 						</Link>
-						<button onClick={() => navigator('./')} className="SideLink w-full flex items-center rounded-lg px-[18px] py-3.5 text-lightGray">
+						<button onClick={logout} className="SideLink w-full flex items-center rounded-lg px-[18px] py-3.5 text-lightGray">
 							<img src={LogoutIcon} alt="DashboardIcon" />
-							<span className="text-sm font-bold leading-5 pl-[13px]">Logout</span>
+							<span className="text-sm font-bold leading-5 pl-[13px]" >Logout</span>
 						</button>
 					</div>
 				</div>

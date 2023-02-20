@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 // import { ProductService } from '../service/ProductService';
@@ -6,10 +6,32 @@ import 'primeicons/primeicons.css';
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import 'primereact/resources/primereact.css';
 import { Link } from 'react-router-dom';
+import { baseurl } from '../../api/baseurl';
+import axios from 'axios';
+import logo from '../../assets/images/profile.png'
 // import 'primeflex/primeflex.css';
 
 function CardHolderList() {
-	// const [products, setProducts] = useState([]);
+	const [products, setProducts] = useState([]);
+	const [card, setCard] = useState(0)
+	const token = localStorage.getItem("Token");
+	const header = {
+		'Authorization': `Bearer ${token}`,
+	}
+
+	const getCardList = async () => {
+		try {
+			const response = await axios.get(`${baseurl}/api/cards/cards-list/`, { headers: header });
+			console.log("RESPONSE>>>", response.data);
+			setProducts(response.data);
+
+		} catch (error) {
+			console.log(error);
+		}
+	}
+	useEffect(() => {
+		getCardList();
+	}, []);
 	// const [multiSortMeta, setMultiSortMeta] = useState([{ field: 'category', order: -1 }]);
 	// const productService = new ProductService();
 
@@ -25,6 +47,16 @@ function CardHolderList() {
 	const priceBodyTemplate = (rowData) => {
 		return formatCurrency(rowData.price);
 	}
+	const columns = [
+		{ field: 'user_id.profile_pic', header: 'User' },
+		{ field: 'card_holder_name', header: 'Holder Name' },
+		{ field: `card_number`, header: 'Card' },
+		{ field: 'card_type', header: 'Type' },
+		{ field: 'card_bank_name', header: 'Bank name' },
+		{ field: 'user_id.email', header: 'Email' },
+		{ field: 'due_amount', header: 'Total Due' },
+		{ field: 'due_date', header: 'Due date' },
+	];
 
 	return (
 		<div className="wrapper min-h-full">
@@ -46,14 +78,13 @@ function CardHolderList() {
 				</div>
 			</div>
 			<div className="card">
-				<DataTable sortMode="multiple" responsiveLayout="scroll">
-					<Column field="Holder Name" header="Holder Name" sortable></Column>
-					<Column field="Card" header="Card" sortable></Column>
-					<Column field="Type" header="Type" sortable></Column>
-					<Column field="Bank name" header="Bank name" sortable></Column>
-					<Column field="Email" header="Email" body={priceBodyTemplate} sortable></Column>
-					<Column field="Total Due" header="Total Due" body={priceBodyTemplate} sortable></Column>
-					<Column field="Due date" header="Due date" body={priceBodyTemplate} sortable></Column>
+
+				<DataTable value={products}>
+					{columns.map((col, i) => (
+						
+							<Column key={col.field} field={col.field} header={col.header} />
+						
+					))}
 				</DataTable>
 			</div>
 		</div>

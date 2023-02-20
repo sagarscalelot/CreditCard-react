@@ -19,15 +19,13 @@ const Login = () => {
     const handleSubmit = async (data) => {
 		data.preventDefault();
 		// console.log('userData', userData);
-
 		try {
-			const response = await axios.post(`${baseurl}/api/user/login-user/`, { email: userData.email, password: userData.password });
+			const response = await axios.post(`${baseurl}/api/user/login-admin/`, { email: userData.email, password: userData.password });
 			
-            if(response.data?.status){
+            if(response){
                 // localStorage.clear();
-                localStorage.setItem("Token", response.data?.token);
-               
-
+                localStorage.setItem("Token", response.data?.Data.token);
+                console.log("Token", response.data?.Data.token);
                 navigate("../dashboard")
             }
 		} catch (error) {
