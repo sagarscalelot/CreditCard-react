@@ -1,16 +1,38 @@
-import React from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from "react-router-dom";
 import bgImage from "../../assets/images/login-images.png"
 import logo from "../../assets/images/logo.png"
 import topCircle from "../../assets/images/top-circle.png"
-import bottomCircle from "../../assets/images/bottom-circle.png"
+import bottomCircle from "../../assets/images/bottom-circle.png";
+import { baseurl } from '../../api/baseurl';
+import axios from 'axios';
 
 
 function ResetPassword() {
 	const navigate = useNavigate();
 
-	const handelSubmitNewPassword = () => {
-		navigate("../dashboard")
+	const [userData, setUserData] = useState({ password: "", password2: "" });
+	const [error, setError] = useState(false);
+	const email = localStorage.getItem("email");
+
+	const setFormField = (field, value) => {
+		setUserData({ ...userData, [field]: value })
+	}
+
+	const handelSubmitNewPassword = async (data) => {
+		data.preventDefault();
+		// console.log('userData', userData);
+		try {
+			const response = await axios.post(`${baseurl}/api/user/reset-password/`, { email: email, password: userData.password, password2: userData.password2 });
+			
+            if(response){
+                localStorage.clear();
+                navigate("../")
+            }
+		} catch (error) {
+            console.log('Something went wrong!!!');
+			setError(true);
+		}
 	}
 	return (
 		<div className="flex h-screen">
@@ -32,11 +54,11 @@ function ResetPassword() {
 							<form className="space-y-5">
 								<div>
 									<label htmlFor="" className="input-titel">Enter New Password</label>
-									<input type="Password" name="Password" placeholder='Enter new password' className="input_box placeholder:text-[#94A3B8] placeholder:text-base" required />
+									<input type="Password" name="password" placeholder='Enter new password' className="input_box placeholder:text-[#94A3B8] placeholder:text-base" value={userData.password} onChange={(e) => { setFormField('password', e.target.value); setError(false) }} required />
 								</div>
 								<div>
 									<label htmlFor="" className="input-titel">Confirm New Password</label>
-									<input type="Password" name="ConfirmPassword" placeholder='Enter confirm password' className="input_box placeholder:text-[#94A3B8] placeholder:text-base" required />
+									<input type="Password" name="password2" placeholder='Enter confirm password' className="input_box placeholder:text-[#94A3B8] placeholder:text-base" value={userData.password2} onChange={(e) => { setFormField('password2', e.target.value); setError(false) }}  required />
 								</div>
 								<button type='submit' className="btn-primary w-full py-[15px] uppercase text-base leading-7 font-extrabold" onClick={handelSubmitNewPassword}>Submit a new password</button>
 							</form>

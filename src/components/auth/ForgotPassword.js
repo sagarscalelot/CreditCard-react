@@ -1,14 +1,36 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'
 import bgImage from "../../assets/images/login-images.png"
 import logo from "../../assets/images/logo.png"
 import topCircle from "../../assets/images/top-circle.png"
-import bottomCircle from "../../assets/images/bottom-circle.png"
+import bottomCircle from "../../assets/images/bottom-circle.png";
+import { baseurl } from '../../api/baseurl';
+import axios from 'axios';
 
 function ForgotPassword() {
     const navigate = useNavigate();
-    const handelReset = () => {
-        navigate("../verificationcode")
+    const [userData, setUserData] = useState({ email: ""});
+	const [error, setError] = useState(false);
+
+    const setFormField = (field, value) => {
+		setUserData({ ...userData, [field]: value })
+	}
+
+
+    const handelReset =async (data) => {
+        data.preventDefault();
+		// console.log('userData', userData);
+		try {
+			const response = await axios.post(`${baseurl}/api/user/reset-password-email/`, { email: userData.email });
+			
+            if(response.data.Status){
+                localStorage.setItem("email",userData.email)
+                navigate("../verificationcode")
+            }
+		} catch (error) {
+            console.log('Something went wrong!!!');
+			setError(true);
+		}
     }
     return (
         <div className="flex h-screen">
@@ -30,7 +52,7 @@ function ForgotPassword() {
                             <form className="space-y-5">
                                 <div>
                                     <label htmlFor="" className="input-titel">Email or Phone</label>
-                                    <input type="text" name="emailORphone" className="input_box placeholder:text-[#94A3B8] placeholder:text-base" placeholder='Enter your email or phone' required />
+                                    <input type="text" name="email" className="input_box placeholder:text-[#94A3B8] placeholder:text-base" placeholder='Enter your email or phone' value={userData.email} onChange={(e) => { setFormField('email', e.target.value); setError(false) }} required />
                                 </div>
                                 <button type='submit' className="btn-primary w-full py-[15px] uppercase text-base leading-7 font-extrabold" onClick={handelReset}>Reset</button>
                             </form>
