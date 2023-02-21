@@ -22,10 +22,9 @@ const Login = () => {
 		try {
 			const response = await axios.post(`${baseurl}/api/user/login-admin/`, { email: userData.email, password: userData.password });
 			
-            if(response){
-                // localStorage.clear();
+            if(response.data?.Status){
+                localStorage.clear();
                 localStorage.setItem("Token", response.data?.Data.token);
-                console.log("Token", response.data?.Data.token);
                 navigate("../dashboard")
             }
 		} catch (error) {

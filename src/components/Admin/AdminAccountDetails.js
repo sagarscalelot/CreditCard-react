@@ -16,7 +16,7 @@ function AdminAccountDetails() {
         'Authorization': `Bearer ${token}`,
     }
 
-    const getCardDetails = async () => {
+    const getAccountDetails = async () => {
         try {
             const response = await axios.get(`${baseurl}/api/user/user-profile/`, { headers: header });
             console.log("RESPONSE>>>", response.data.Data);
@@ -26,7 +26,7 @@ function AdminAccountDetails() {
         }
     }
     useEffect(() => {
-        getCardDetails();
+        getAccountDetails();
     }, []);
     return (
         <div className="wrapper min-h-full">

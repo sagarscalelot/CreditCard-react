@@ -24,7 +24,7 @@ import { baseurl } from '../../api/baseurl';
 import axios from 'axios';
 
 function SideBar() {
-	const navigator = useNavigate();
+	const navigate = useNavigate();
 	const token = localStorage.getItem("Token");
     const [details, setDetails] = useState({});
 		const header = {
@@ -33,12 +33,21 @@ function SideBar() {
 	
 	const getCardDetails = async () => {
 		try {
-				const response = await axios.get(`${baseurl}/api/user/admin-profile/`, { headers: header });
+				const response = await axios.get(`${baseurl}/api/user/user-profile/`, { headers: header });
+				// console.log("RESPONSE>>>", response.data.data);
 				setDetails(response.data.Data)
 		} catch (error) {
 				console.log(error);
 		}
 }
+
+const handleLogout = () => {
+	localStorage.clear();
+    setTimeout(() => {
+      navigate("./");
+    }, 200);
+  }
+
 useEffect(() => {
 		getCardDetails();
 }, []);
@@ -81,7 +90,7 @@ const logout = ()=>{
 							<img src={HelpIcon} alt="DashboardIcon" />
 							<span className="text-sm font-bold leading-5 pl-[13px]">Help</span>
 						</Link>
-						<button onClick={logout} className="SideLink w-full flex items-center rounded-lg px-[18px] py-3.5 text-lightGray">
+						<button onClick={handleLogout} className="SideLink w-full flex items-center rounded-lg px-[18px] py-3.5 text-lightGray">
 							<img src={LogoutIcon} alt="DashboardIcon" />
 							<span className="text-sm font-bold leading-5 pl-[13px]" >Logout</span>
 						</button>
@@ -245,8 +254,8 @@ const logout = ()=>{
 								{/* Profile Details Box   */}
 								<div className="absolute w-full top-[54px] right-0 bg-white rounded-2xl shadow-shadowbox max-w-[218px] min-w-[218px] invisible group-hover:visible opacity-0 group-hover:opacity-100 translate-y-10 group-hover:translate-y-0 z-40 anim">
 									<div className="">
-										<span onClick={() => navigator('dashboard/adminaccountdetails')} className='w-full block text-left text-[#334155] hover:text-darkGreen text-sm font-medium anim px-6 py-2 pt-4'>Account Details</span>
-										<span onClick={() => navigator('dashboard/admincards')} className='w-full block text-left text-[#334155] hover:text-darkGreen text-sm font-medium anim px-6 py-2'>Cards</span>
+										<span onClick={() => navigate('dashboard/adminaccountdetails')} className='w-full block text-left text-[#334155] hover:text-darkGreen text-sm font-medium anim px-6 py-2 pt-4'>Account Details</span>
+										<span onClick={() => navigate('dashboard/admincards')} className='w-full block text-left text-[#334155] hover:text-darkGreen text-sm font-medium anim px-6 py-2'>Cards</span>
 										<span className='w-full block text-left text-[#334155] hover:text-darkGreen text-sm font-medium anim px-6 py-2'>My wallet</span>
 										<span className='w-full block text-left text-[#334155] hover:text-darkGreen text-sm font-medium anim px-6 py-2'>Bank Accounts</span>
 										<span className='w-full block text-left text-[#334155] hover:text-darkGreen text-sm font-medium anim px-6 py-2 pb-4'>Transactions</span>
