@@ -6,6 +6,7 @@ import Register from '../components/auth/Register';
 import VerificationCode from '../components/auth/VerificationCode';
 import ResetPassword from '../components/auth/ResetPassword';
 import SideBar from '../components/SideBar/SideBar';
+import VerifyReset from '../components/auth/VerifyReset';
 
 function AllRoutes() {
     return (
@@ -16,6 +17,7 @@ function AllRoutes() {
                     <Route path='register' element={<Register />} />
                     <Route path='forgotpassword' element={<ForgotPassword />} />
                     <Route path='verificationcode' element={<VerificationCode />} />
+                    <Route path='verifyreset' element={<VerifyReset />} />
                     <Route path='resetpassword' element={<ResetPassword />} />
                 {/* </Route> */}
                 <Route path="/*" element={<SideBar />} />

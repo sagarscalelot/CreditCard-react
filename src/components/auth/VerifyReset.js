@@ -8,7 +8,7 @@ import { baseurl } from '../../api/baseurl';
 import axios from 'axios';
 
 
-function VerificationCode() {
+function VerifyReset() {
 	const navigate = useNavigate();
 	const [otpValue, setOtpValue] = useState(["0", "0", "0", "0"]);
 	const otpLength = otpValue.Length
@@ -57,7 +57,7 @@ function VerificationCode() {
 			if (fullOtp != "0000") {
                 const response = await axios.post(`${baseurl}/api/user/verify-admin/`, payload);
                 console.log("Response",response);
-                navigate('../')
+                navigate('../resetpassword')
             }
 		} catch (error) {
 			console.log(error);
@@ -105,4 +105,4 @@ function VerificationCode() {
 	)
 }
 
-export default VerificationCode
+export default VerifyReset

@@ -25,7 +25,7 @@ function ForgotPassword() {
 			
             if(response.data.Status){
                 localStorage.setItem("email",userData.email)
-                navigate("../verificationcode")
+                navigate("../verifyreset")
             }
 		} catch (error) {
             console.log('Something went wrong!!!');
