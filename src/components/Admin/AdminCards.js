@@ -27,9 +27,9 @@ function AdminCards() {
     const getCards = async () => {
         try {
             const response = await axios.get(`${baseurl}/api/cards/card-view`, { headers: header });
-            console.log("cards : ", response);
-            if (response.Status == true) {
-                setCards(response.data);
+            console.log("cards : ", response.data.Status);
+            if (response.data.Status === true) {
+                setCards(response.data.data);
             }
         } catch (error) {
             console.log(error);

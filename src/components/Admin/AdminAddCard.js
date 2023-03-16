@@ -47,7 +47,7 @@ function AdminAddCard() {
 
 	const clickNextHandler = async (values) => {
 		const requestObj = { ...values};
-		// console.log("values >> ", {requestObj});
+		console.log("values >> ", header);
 		try {
 			const response = await axios.post(`${baseurl}/api/cards/add-card`, requestObj, { headers: header });
 			console.log("Personal details > ", response.data);
