@@ -21,7 +21,7 @@ function CardHolderList() {
 
 	const getCardList = async () => {
 		try {
-			const response = await axios.get(`${baseurl}/api/cards/cards-list/`, { headers: header });
+			const response = await axios.get(`${baseurl}/api/cards/card-view`, { headers: header });
 			console.log("RESPONSE>>>", response.data);
 			setProducts(response.data);
 

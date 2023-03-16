@@ -18,7 +18,7 @@ function AdminAccountDetails() {
 
     const getAccountDetails = async () => {
         try {
-            const response = await axios.get(`${baseurl}/api/user/user-profile/`, { headers: header });
+            const response = await axios.get(`${baseurl}/api/user/admin-profile`, { headers: header });
             console.log("RESPONSE>>>", response.data.Data);
             setDetails(response.data.Data)
         } catch (error) {

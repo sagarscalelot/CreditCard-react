@@ -18,9 +18,8 @@ const Login = () => {
 
     const handleSubmit = async (data) => {
 		data.preventDefault();
-		// console.log('userData', userData);
 		try {
-			const response = await axios.post(`${baseurl}/api/user/login-admin/`, { email: userData.email, password: userData.password });
+			const response = await axios.post(`${baseurl}/api/user/login-admin`, { email: userData.email, password: userData.password });
 			
             if(response.data?.Status){
                 localStorage.clear();

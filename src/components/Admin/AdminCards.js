@@ -17,7 +17,7 @@ function AdminCards() {
 
     const getAccountDetails = async () => {
         try {
-            const response = await axios.get(`${baseurl}/api/user/user-profile/`, { headers: header });
+            const response = await axios.get(`${baseurl}/api/user/admin-profile`, { headers: header });
             setAccountDetails(response.data.Data);
         } catch (error) {
             console.log(error);
@@ -26,13 +26,15 @@ function AdminCards() {
 
     const getCards = async () => {
         try {
-            const response = await axios.get(`${baseurl}/api/cards/cards-list`, { headers: header });
-            setCards(response.data);
+            const response = await axios.get(`${baseurl}/api/cards/card-view`, { headers: header });
+            console.log("cards : ", response);
+            if (response.Status == true) {
+                setCards(response.data);
+            }
         } catch (error) {
             console.log(error);
         }
     }
-
     useEffect(() => {
         getAccountDetails();
         getCards();

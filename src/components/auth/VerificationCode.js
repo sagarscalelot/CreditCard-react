@@ -36,7 +36,7 @@ function VerificationCode() {
 
 	const reSendOtp = async () => {
 		try {
-				const response = await axios.post(`${baseurl}/api/user/reset-password-email/`, { email: email });
+				const response = await axios.post(`${baseurl}/api/user/reset-password-email`, { email: email });
 				console.log(response)
 
 		} catch (error) {
@@ -55,7 +55,7 @@ function VerificationCode() {
 				otp: fullOtp
 			}
 			if (fullOtp != "0000") {
-                const response = await axios.post(`${baseurl}/api/user/verify-admin/`, payload);
+                const response = await axios.post(`${baseurl}/api/user/verify-admin`, payload);
                 console.log("Response",response);
                 navigate('../')
             }

@@ -39,7 +39,7 @@ const Register = () => {
 			return
 		}
 		try {
-			const response = await axios.post(`${baseurl}/api/user/register-admin/`, values);
+			const response = await axios.post(`${baseurl}/api/user/register-admin`, values);
 			  navigate(`/verificationcode`);
 				localStorage.setItem("email", response.data.Data.email)
 		} catch (error) {

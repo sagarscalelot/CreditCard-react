@@ -23,7 +23,7 @@ function ResetPassword() {
 		data.preventDefault();
 		// console.log('userData', userData);
 		try {
-			const response = await axios.post(`${baseurl}/api/user/reset-password/`, { email: email, password: userData.password, password2: userData.password2 });
+			const response = await axios.post(`${baseurl}/api/user/reset-password`, { email: email, password: userData.password, password2: userData.password2 });
 			
             if(response){
                 localStorage.clear();
