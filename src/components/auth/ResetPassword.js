@@ -6,6 +6,7 @@ import topCircle from "../../assets/images/top-circle.png"
 import bottomCircle from "../../assets/images/bottom-circle.png";
 import { baseurl } from '../../api/baseurl';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
 
 
 function ResetPassword() {
@@ -25,12 +26,17 @@ function ResetPassword() {
 		try {
 			const response = await axios.post(`${baseurl}/api/user/reset-password`, { email: email, password: userData.password, password2: userData.password2 });
 			
-            if(response){
-                localStorage.clear();
-                navigate("../")
-            }
+            if(response.data.Status){
+				toast.success(response.data.Message);
+				setTimeout(() => {
+					localStorage.clear();
+					navigate("../")
+				}, 1000);
+            } else {
+				toast.error(response.data.Message);
+			}
 		} catch (error) {
-            console.log('Something went wrong!!!');
+            toast.error('Something went wrong!!!');
 			setError(true);
 		}
 	}
@@ -69,6 +75,18 @@ function ResetPassword() {
 					<img src={bgImage} alt="login-bg" className="w-full h-full object-cover object-bottom" />
 				</div>
 			</div>
+			<ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
 		</div>
 	)
 }

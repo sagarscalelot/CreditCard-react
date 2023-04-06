@@ -4,12 +4,14 @@ import ChangePassword from './Popup/ChangePassword';
 import { baseurl } from '../../api/baseurl';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+import previewImage from "../../assets/images/profile.png"
 
 
 function AdminAccountDetails() {
     const [changePassword, setChangePassword] = useState(false);
     const token = localStorage.getItem("Token");
     const [details, setDetails] = useState({});
+	const [profileImage, setProfileImage] = useState(null);
    
     const navigate = useNavigate();
     const header = {
@@ -19,15 +21,56 @@ function AdminAccountDetails() {
     const getAccountDetails = async () => {
         try {
             const response = await axios.get(`${baseurl}/api/user/admin-profile`, { headers: header });
-            console.log("RESPONSE>>>", response.data.Data);
             setDetails(response.data.Data)
+            console.log("admin : ", response.data.Data);
+            
         } catch (error) {
             console.log(error);
         }
     }
+
+    const addProfile = async (selected) => {
+		let formData = new FormData();
+		formData.append("profile_pic", selected);
+		try {
+			const response = await axios.patch(`${baseurl}/api/user/admin-edit-profile`, formData, { headers: header })
+			// const response = await dispatch(addProfileImage(formData)).unwrap();
+			console.log("image : ", response.data.Data);
+			if (response?.data?.Status) {
+				// alert("Profile image Updated Successful")
+                setProfileImage(response.data.profile_pic)
+			} else {
+				alert("Profile image Not Updated!")
+			}
+		} catch (error) {
+			alert("Somthing Went To Wrong!")
+		}
+	}
+
+    const photoChange = (event) => {
+		const types = ["image/png", "image/jpeg", "image/jpg"];
+		let selected = event.target.files[0];
+		try {
+			if (selected && types.includes(selected.type)) {
+				if (selected.size < 1 * 1024 * 1024) {
+					setProfileImage(selected);
+					addProfile(selected);
+				} else {
+					alert("File size is greater than 1mb");
+				}
+			} else {
+				alert("Please select image file with jpeg/png.");
+			}
+		} catch (error) {
+			console.log(error);
+			alert("Error while selecting image")
+		}
+	}
+
     useEffect(() => {
+        console.log("refresh");
         getAccountDetails();
-    }, []);
+    }, [profileImage]);
     return (
         <div className="wrapper min-h-full">
             <div className="flex items-center">
@@ -37,6 +80,32 @@ function AdminAccountDetails() {
                <Link to={"/dashboard"}><button type='button' className="text-3xl font-bold text-yankeesBlue leading-8 pl-7">{details?.first_name} {details?.last_name}'s Account Details</button></Link> 
             </div>
             <div className="pt-[50px]">
+            <div className="flex items-center justify-center pb-[50px]">
+					<div className="w-44 h-44 rounded-full border-8 border-spiroDiscoBall bg-[#E2E8F0] relative mr-9 max-[600px]:mr-0">
+						<img
+							// src={
+							// 	profileImage
+							// 		? URL.createObjectURL(profileImage)
+							// 		: details?.profile_pic
+							// 			? details?.s3Url + details?.profile_pic
+							// 			: previewImage
+							// }
+							src={details?.profile_pic}
+							alt="pictures"
+							className="w-full h-full object-cover rounded-full overflow-hidden"
+						/>
+						<div className="absolute bottom-0 right-0 flex justify-center items-center border-[2px] border-white w-10 h-10 rounded-full bg-[#E2E8F0] z-10">
+							{/* <i className="icon-camera"></i> */}
+							<img src={details?.profile_pic} alt="Alt Text" className='w-full h-full object-cover rounded-full overflow-hidden p-1' />
+							<input
+								type="file"
+								onChange={(e) => photoChange(e.currentTarget.files[0])}
+								className="opacity-0 absolute inset-0"
+							/>
+							{/* <input type="file" onChange={(e) => !isDisable && photoChangeHandler(e)} disabled={isDisable} className="opacity-0 absolute inset-0"/> */}
+						</div>
+					</div>
+				</div>
                 <form className="w-full flex items-center justify-between">
                     <div className="w-full">
                         <div className="w-full flex space-x-6 mb-7">

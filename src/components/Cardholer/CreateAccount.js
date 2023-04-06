@@ -1,34 +1,123 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState , useCallback } from 'react'
+import { useNavigate, useParams, Link } from 'react-router-dom'
+import { baseurl } from '../../api/baseurl';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
 
 function CreateAccount() {
+
+	const navigate = useNavigate();
+	// const dispatch = useDispatch();
+
+	const token = localStorage.getItem("Token");
+    const header = {
+        'Authorization': `Bearer ${token}`,
+		'Content-Type': 'multipart/form-data'
+    }
+	const [acceptTerm, setAcceptTerm] = useState(false);
+	const [isCheck, setIsCheck] = useState(false)
+
+	const initialState = {
+		first_name: "",
+		last_name: "",
+		password: "",
+		password2: "",
+		email: "",
+		phone_no: "",
+		aadhar: "",
+		pan: "",
+		cheque: "",
+		refer_code: "",
+		tc: "false"
+	}
+
+	const ValidationSchema = Yup.object().shape({
+		first_name: Yup.string().required('First name is required*'),
+		last_name: Yup.string().required('Last name is required*'),
+		// password: Yup.string().test('len', 'Must be exactly 12 characters', val => val.length === 12).required('Card number is required*'),
+		password: Yup.string().required('Password is required*'),
+		password2: Yup.string().required('Confirm Password is required*'),
+		email: Yup.string().required('Email is required'),
+		phone_no:  Yup.number().required('Phone no is required')
+		.typeError("Phone no must be a digit")
+		.integer()
+		.positive("Phone no must be a positive"),
+		aadhar: Yup.string().required('Aadhar is required'),
+		pan: Yup.string().required('Pan is required'),
+		cheque: Yup.string().required('Cheque is required'),
+	});
+
+	const clickNextHandler = async (values) => {
+		const requestObj = { ...values};
+		console.log("values >> ", values);
+		try {
+			const response = await axios.post(`${baseurl}/api/user/create-account`, requestObj, { headers: header });
+			console.log("Personal details > ", response.data);
+			
+			if (response.data.Status) {
+				toast.success(response.data.Message);
+				// dispatch(increment());
+				setTimeout(() => {
+					navigate(`../`);
+				}, 1000);
+			} else {
+				toast.error("Something went wrong!!");
+				// toast.error(response.data.Message);
+			}
+		} catch (error) {
+			toast.error("Something Went Wrong!!");
+			// navigate(`/auth/login`);
+			console.log(error);
+		}
+	}
+
+	const formik = useFormik({
+		initialValues: initialState,
+		validationSchema: ValidationSchema,
+		onSubmit: clickNextHandler,
+	});
+
+	const setInputValue = useCallback(
+		(key, value) =>
+			formik.setValues({
+				...formik.values,
+				[key]: value,
+			}),
+		[formik]
+	);
 	return (
 		<div className="wrapper min-h-full">
 			<div className="flex items-center cursor-pointer">
-				<svg width="24" height="16" viewBox="0 0 24 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<path d="M7.65995 2.41586C8.0277 2.05138 8.03034 1.4578 7.66586 1.09005C7.30139 0.722305 6.7078 0.719657 6.34005 1.08414L4.09664 3.30762C3.25167 4.14505 2.56108 4.82949 2.07132 5.43932C1.56203 6.07348 1.19337 6.71716 1.09489 7.4898C1.0517 7.82858 1.0517 8.17142 1.09489 8.5102C1.19337 9.28284 1.56203 9.92652 2.07132 10.5607C2.56108 11.1705 3.25167 11.855 4.09665 12.6924L6.34005 14.9159C6.7078 15.2803 7.30138 15.2777 7.66586 14.9099C8.03034 14.5422 8.02769 13.9486 7.65995 13.5841L5.45624 11.4C4.56187 10.5136 3.94837 9.90353 3.53324 9.38662C3.39833 9.21863 3.29307 9.07075 3.21135 8.9375H22C22.5178 8.9375 22.9375 8.51777 22.9375 8C22.9375 7.48223 22.5178 7.0625 22 7.0625H3.21135C3.29308 6.92925 3.39833 6.78137 3.53324 6.61338C3.94837 6.09647 4.56187 5.48642 5.45624 4.6L7.65995 2.41586Z" fill="#0F172A" stroke="#0F172A" strokeLinecap="round" />
+				<svg onClick={() => navigate(`../`)} width="24" height="16" viewBox="0 0 24 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M7.65995 2.41586C8.0277 2.05138 8.03034 1.4578 7.66586 1.09005C7.30139 0.722305 6.7078 0.719657 6.34005 1.08414L4.09664 3.30762C3.25167 4.14505 2.56108 4.82949 2.07132 5.43932C1.56203 6.07348 1.19337 6.71716 1.09489 7.4898C1.0517 7.82858 1.0517 8.17142 1.09489 8.5102C1.19337 9.28284 1.56203 9.92652 2.07132 10.5607C2.56108 11.1705 3.25167 11.855 4.09665 12.6924L6.34005 14.9159C6.7078 15.2803 7.30138 15.2777 7.66586 14.9099C8.03034 14.5422 8.02769 13.9486 7.65995 13.5841L5.45624 11.4C4.56187 10.5136 3.94837 9.90353 3.53324 9.38662C3.39833 9.21863 3.29307 9.07075 3.21135 8.9375H22C22.5178 8.9375 22.9375 8.51777 22.9375 8C22.9375 7.48223 22.517 /8 7.0625 22 7.0625H3.21135C3.29308 6.92925 3.39833 6.78137 3.53324 6.61338C3.94837 6.09647 4.56187 5.48642 5.45624 4.6L7.65995 2.41586Z" fill="#0F172A" stroke="#0F172A" strokeLinecap="round" />
 				</svg>
 				<h3 className="text-yankeesBlue leading-8 pl-7">Create account</h3>
 			</div>
-			<form className='pt-11 space-y-5'>
+			<form className='pt-11 space-y-5'  onSubmit={formik.handleSubmit} >
 				<div className='w-full flex items-center space-x-6'>
 					<div className='w-1/2'>
 						<label htmlFor="" className="input-title2">First name</label>
-						<input type="text" name="" className="input_box2 placeholder:text-[#94A3B8] placeholder:text-xl" placeholder='Enter first name' required />
+						<input type="text" name="first_name" className="input_box2 placeholder:text-[#94A3B8] placeholder:text-xl" placeholder='Enter first name' required onChange={(e) => setInputValue("first_name", e.target.value)} />
+						<small className="text-red-500 text-xs">{formik.errors.first_name}</small>
 					</div>
 					<div className='w-1/2'>
 						<label htmlFor="" className="input-title2">Last name</label>
-						<input type="text" name="" className="input_box2 placeholder:text-[#94A3B8] placeholder:text-xl" placeholder='Enter last name' required />
+						<input type="text" name="last_name" className="input_box2 placeholder:text-[#94A3B8] placeholder:text-xl" placeholder='Enter last name' required onChange={(e) => setInputValue("last_name", e.target.value)} />
+						<small className="text-red-500 text-xs">{formik.errors.last_name}</small>
 					</div>
 				</div>
 				<div className='w-full flex items-center space-x-6'>
 					<div className='w-1/2'>
 						<label htmlFor="" className="input-title2">Email</label>
-						<input type="email" name="" className="input_box2 placeholder:text-[#94A3B8] placeholder:text-xl" placeholder='Enter email ' required />
+						<input type="email" name="email" className="input_box2 placeholder:text-[#94A3B8] placeholder:text-xl" placeholder='Enter email ' required onChange={(e) => setInputValue("email", e.target.value)} />
+						<small className="text-red-500 text-xs">{formik.errors.email}</small>
 					</div>
 					<div className='w-1/2'>
 						<label htmlFor="" className="input-title2">Phone number</label>
-						<input type="tel" name="" className="input_box2 placeholder:text-[#94A3B8] placeholder:text-xl" placeholder='Enter phone number' required />
+						<input type="tel" name="phone_no" className="input_box2 placeholder:text-[#94A3B8] placeholder:text-xl" placeholder='Enter phone number' required onChange={(e) => setInputValue("phone_no", e.target.value)} />
+						<small className="text-red-500 text-xs">{formik.errors.phone_no}</small>
 					</div>
 				</div>
 				<div className='w-full flex items-center space-x-6'>
@@ -42,7 +131,7 @@ function CreateAccount() {
 							</svg>
 							<span className="text-[#94A3B8] font-normal text-xl pl-4">Upload Aadhar</span>
 						</label>
-						<input type="file" name="" id='AdharCard-photo' className="input_box2 placeholder:text-[#94A3B8] placeholder:text-base hidden" placeholder='Card photo upload' required />
+						<input type="file" name="aadhar" id='AdharCard-photo' className="input_box2 placeholder:text-[#94A3B8] placeholder:text-base hidden" placeholder='Card photo upload' accept='image/*' required onChange={(e) => setInputValue("aadhar", e.currentTarget.files[0])} /><small className="text-red-500 text-xs">{formik.errors.aadhar}</small>
 					</div>
 					<div className='w-1/2'>
 						<label htmlFor="" className="input-title2">Upload pan-card</label>
@@ -54,7 +143,8 @@ function CreateAccount() {
 							</svg>
 							<span className="text-[#94A3B8] font-normal text-xl pl-4">Upload pan-card</span>
 						</label>
-						<input type="file" name="" id='panCard-photo' className="input_box2 placeholder:text-[#94A3B8] placeholder:text-base hidden" placeholder='Card photo upload' required />
+						<input type="file" name="pan" id='panCard-photo' className="input_box2 placeholder:text-[#94A3B8] placeholder:text-base hidden" placeholder='Card photo upload'accept='image/*' required onChange={(e) => setInputValue("pan", e.currentTarget.files[0])} />
+						<small className="text-red-500 text-xs">{formik.errors.pan}</small>
 					</div>
 				</div>
 				<div className='w-full flex items-center space-x-6'>
@@ -68,29 +158,46 @@ function CreateAccount() {
 							</svg>
 							<span className="text-[#94A3B8] font-normal text-xl pl-4">Upload cheque photo </span>
 						</label>
-						<input type="file" name="" id='cheque-photo' className="input_box2 placeholder:text-[#94A3B8] placeholder:text-base hidden" placeholder='Card photo upload' required />
+						<input type="file" name="cheque" id='cheque-photo' className="input_box2 placeholder:text-[#94A3B8] placeholder:text-base hidden" placeholder='Card photo upload'accept='image/*' required onChange={(e) => setInputValue("cheque", e.currentTarget.files[0])} />
+						<small className="text-red-500 text-xs">{formik.errors.cheque}</small>
 					</div>
 				</div>
 				<div className='w-full flex items-center space-x-6'>
 					<div className='w-1/2'>
 						<label htmlFor="" className="input-title2">Password</label>
-						<input type="password" name="" className="input_box2 placeholder:text-[#94A3B8] placeholder:text-xl" placeholder='Enter password' required />
+						<input type="password" name="password" className="input_box2 placeholder:text-[#94A3B8] placeholder:text-xl" placeholder='Enter password' required onChange={(e) => setInputValue("password", e.target.value)} />
+						<small className="text-red-500 text-xs">{formik.errors.password}</small>
 					</div>
 					<div className='w-1/2'>
 						<label htmlFor="" className="input-title2">Confirm password</label>
-						<input type="password" name="" className="input_box2 placeholder:text-[#94A3B8] placeholder:text-xl" placeholder='Enter confirm password' required />
+						<input type="password" name="password2" className="input_box2 placeholder:text-[#94A3B8] placeholder:text-xl" placeholder='Enter confirm password' required onChange={(e) => setInputValue("password2", e.target.value)} />
+						<small className="text-red-500 text-xs">{formik.errors.password2}</small>
 					</div>
 				</div>
 				<div className='w-full flex items-center space-x-6'>
 					<div className="flex items-center">
-						<label className="checkbox w-5 mr-2"><input type="checkbox" className="bg-white" /><i className="icon-right"></i></label>
+						<label className="checkbox w-5 mr-2"><input type="checkbox" name="tc" className="bg-white"
+						 checked={isCheck ? true : false } onClick={(e) => setInputValue(isCheck)} 
+						 /><i className="icon-right"></i></label>
 						<span className="text-sm leading-5 text-[#64748B] font-bold">I have read and accept <Link className='font-bold text-yankeesBlue'>Terms and condition</Link></span>
 					</div>
 				</div>
 				<div className="w-full flex space-x-6 mb-7">
-					<button type="button" className="btn-secondary w-full">Create account</button>
+					<button type="submit" className="btn-secondary w-full">Create account</button>
 				</div>
 			</form>
+			<ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
 		</div>
 	)
 }

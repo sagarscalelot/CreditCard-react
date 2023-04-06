@@ -4,6 +4,7 @@ import CardBg from "../../assets/images/card.png";
 import creditCard from "../../assets/images/credit-card.png";
 import { baseurl } from '../../api/baseurl';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 function AdminCards() {
 
@@ -27,11 +28,13 @@ function AdminCards() {
     const getCards = async () => {
         try {
             const response = await axios.get(`${baseurl}/api/cards/card-view`, { headers: header });
-            console.log("cards : ", response.data.Status);
-            if (response.data.Status === true) {
+            console.log("cards : ", response.data.data);
+            if (response.data.Status) {
+                toast.success(response.data.Message);
                 setCards(response.data.data);
             }
         } catch (error) {
+            toast.error("Something went wrong!!");
             console.log(error);
         }
     }

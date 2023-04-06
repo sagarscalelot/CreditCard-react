@@ -8,6 +8,8 @@ import axios from 'axios';
 import * as Yup from 'yup';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { baseurl } from '../../api/baseurl';
+import { ToastContainer, toast } from 'react-toastify'
+import "react-toastify/dist/ReactToastify.css";
 
 
 
@@ -34,17 +36,30 @@ const Register = () => {
 	});
 
 	const handelRegister = async (values) => {
-		if (values.password !== values.password2) {
-			alert("password not match")
-			return
-		}
-		try {
-			const response = await axios.post(`${baseurl}/api/user/register-admin`, values);
-			  navigate(`/verificationcode`);
-				localStorage.setItem("email", response.data.Data.email)
-		} catch (error) {
-			console.log("something Went to Wrong!!");
-		}
+		// console.log( "sdfd", values);
+		// if (values.password === values.password2) {
+			// return
+			try {
+				const response = await axios.post(`${baseurl}/api/user/register-admin`, values);
+				// console.log(response.data.Data);
+				if (response.data?.Status) {
+					toast.success("Registered successfully.")
+					setTimeout(() => {
+						navigate(`/verificationcode`);  
+						localStorage.setItem("email", response.data.Data.email)
+					}, 1000);
+				} else {
+					toast.error("Something went wrong!!");
+				}
+			} catch (error) {
+				toast.error("something Went to Wrong!!");
+			}
+		// } else {
+		// 	toast.warn("Confirm password and password not match.");
+		// 	setTimeout(() => {
+		// 		return;
+		// 	}, 1500);
+		// }
 	}
 	return (
 		<div className="flex h-screen">
@@ -115,6 +130,18 @@ const Register = () => {
 					<img src={bgImage} alt="login-bg" className="w-full h-full object-cover object-bottom" />
 				</div>
 			</div>
+			<ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
 		</div>
 	)
 }

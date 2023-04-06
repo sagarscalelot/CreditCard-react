@@ -6,6 +6,7 @@ import topCircle from "../../assets/images/top-circle.png"
 import bottomCircle from "../../assets/images/bottom-circle.png";
 import { baseurl } from '../../api/baseurl';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify'
 
 
 function VerificationCode() {
@@ -37,11 +38,15 @@ function VerificationCode() {
 	const reSendOtp = async () => {
 		try {
 				const response = await axios.post(`${baseurl}/api/user/reset-password-email`, { email: email });
-				console.log(response)
+				if (response.data.Status) {
+					toast.success("Otp resend successfully.");
+				} else {
+					toast.error("Something went wrong.");
+				}
 
 		} catch (error) {
 			 
-				console.log("Something Went wrong.",error);
+				toast.error("Something Went wrong.",error);
 		}
 }
 
@@ -54,13 +59,21 @@ function VerificationCode() {
 				email: email,
 				otp: fullOtp
 			}
+			console.log("pay : ", payload);
 			if (fullOtp != "0000") {
                 const response = await axios.post(`${baseurl}/api/user/verify-admin`, payload);
-                console.log("Response",response);
-                navigate('../')
+				console.log("Response",response);
+				if (response.data.Status) {
+					toast.success("Otp verified successfully.")
+					setTimeout(() => {
+						navigate('../')
+					}, 1000);
+				} else {
+					toast.error(response.data.Message);
+				}
             }
 		} catch (error) {
-			console.log(error);
+			toast.error(error);
 		}
 		console.log("Otp value", fullOtp);
 	}
@@ -101,6 +114,18 @@ function VerificationCode() {
 					<img src={bgImage} alt="login-bg" className="w-full h-full object-cover object-bottom" />
 				</div>
 			</div>
+			<ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
 		</div>
 	)
 }

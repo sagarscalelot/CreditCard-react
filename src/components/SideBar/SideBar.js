@@ -34,8 +34,8 @@ function SideBar() {
 	const getCardDetails = async () => {
 		try {
 				const response = await axios.get(`${baseurl}/api/user/user-profile`, { headers: header });
-				// console.log("RESPONSE>>>", response.data.data);
-				setDetails(response.data.Data)
+				console.log("RESPONSE : ", response.data.Data);
+				setDetails(response.data.Data)	
 		} catch (error) {
 				console.log(error);
 		}
@@ -49,8 +49,10 @@ const handleLogout = () => {
   }
 
 useEffect(() => {
+	console.log("in side");
 		getCardDetails();
 }, []);
+
 const logout = ()=>{
 	 navigator('./')
 	 localStorage.clear();
@@ -244,7 +246,7 @@ const logout = ()=>{
 									<div className="flex items-center">
 										<div className="flex items-center">
 											<div className="w-9 h-9 overflow-hidden rounded-full bg-white">
-												<img src={Profile} alt="Profile Avatar" className='w-full h-full object-cover object-top' />
+												<img src={details?.profile_pic ? details?.profile_pic : Profile} alt="Profile Avatar" className='w-full h-full object-cover object-top' />
 											</div>
 											<span className="block text-left max-w-[120px] min-w-[120px] w-full text-sm font-bold leading-5 text-[#1E293B] ml-3 truncate">{details?.first_name} {details?.last_name}</span>
 										</div>

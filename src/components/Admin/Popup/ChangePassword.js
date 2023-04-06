@@ -15,14 +15,21 @@ function ChangePassword({ handleClose }) {
         'Authorization': `Bearer ${token}`,
     }
 
-    const handleSubmit = async (data) => {
-		data.preventDefault();
-        if (data.password !== data.password2) {
+    const handleSubmit = async () => {
+		userData.preventDefault();
+        // console.log("pass : ", userData);
+        if (userData.password !== userData.password2) {
 			alert("password not match")
-			return
+			// return 
 		}
 		try {
-			const response = await axios.post(`${baseurl}/api/user/change-password/`, { old_password: userData.old_password, password: userData.password,password2: userData.password2 }, { headers: header });
+			const response = await axios.post(`${baseurl}/api/user/change-password`, { old_password: userData.old_password, password: userData.password,password2: userData.password2 }, { headers: header });
+            console.log("res : ", response.data);
+            if(response.data.Status) {
+                console.log("Password change successfully.");
+            } else {
+                alert(response.data.Message)
+            }
             handleClose(false)
 		} catch (error) {
             console.log('Something went wrong!!!');
@@ -39,15 +46,15 @@ function ChangePassword({ handleClose }) {
                         <form className='space-y-4'>
                             <div className='w-full'>
                                 <label htmlFor="" className="input-titel">Current Password</label>
-                                <input type="text" name="old_password" className="input_box placeholder:text-[#94A3B8] placeholder:text-base" placeholder='Enter current password' value={userData.old_password} onChange={(e) => { setFormField('old_password', e.target.value); setError(false) }} />
+                                <input type="password" name="old_password" className="input_box placeholder:text-[#94A3B8] placeholder:text-base" placeholder='Enter current password' value={userData.old_password} onChange={(e) => { setFormField('old_password', e.target.value); setError(false) }} />
                             </div>
                             <div className='w-full'>
                                 <label htmlFor="" className="input-titel">New Password</label>
-                                <input type="text" name="password" className="input_box placeholder:text-[#94A3B8] placeholder:text-base" placeholder='Enter new password'  value={userData.password} onChange={(e) => { setFormField('password', e.target.value); setError(false) }}  />
+                                <input type="password" name="password" className="input_box placeholder:text-[#94A3B8] placeholder:text-base" placeholder='Enter new password'  value={userData.password} onChange={(e) => { setFormField('password', e.target.value); setError(false) }}  />
                             </div>
                             <div className='w-full'>
                                 <label htmlFor="" className="input-titel">Confirm Password</label>
-                                <input type="text" name="password2" className="input_box placeholder:text-[#94A3B8] placeholder:text-base" placeholder='Enter confirm password'  value={userData.password2} onChange={(e) => { setFormField('password2', e.target.value); setError(false) }} />
+                                <input type="password" name="password2" className="input_box placeholder:text-[#94A3B8] placeholder:text-base" placeholder='Enter confirm password'  value={userData.password2} onChange={(e) => { setFormField('password2', e.target.value); setError(false) }} />
                             </div>
                             <div className="flex space-x-5">
                                 <button type="button" className="btn-gray w-full" onClick={() => handleClose(false)}>Cancel</button>

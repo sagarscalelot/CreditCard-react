@@ -6,6 +6,7 @@ import topCircle from "../../assets/images/top-circle.png"
 import bottomCircle from "../../assets/images/bottom-circle.png";
 import { baseurl } from '../../api/baseurl';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
 
 function ForgotPassword() {
     const navigate = useNavigate();
@@ -24,11 +25,16 @@ function ForgotPassword() {
 			const response = await axios.post(`${baseurl}/api/user/reset-password-email`, { email: userData.email });
 			
             if(response.data.Status){
-                localStorage.setItem("email",userData.email)
-                navigate("../verifyreset")
+                toast.success(response.data.Message);
+                setTimeout(() => {
+                    localStorage.setItem("email",userData.email)
+                    navigate("../verifyreset")
+                }, 1000);
+            } else {
+                toast.error(response.data.Message);
             }
 		} catch (error) {
-            console.log('Something went wrong!!!');
+            toast.error('Something went wrong!!!');
 			setError(true);
 		}
     }
@@ -63,6 +69,18 @@ function ForgotPassword() {
                     <img src={bgImage} alt="login-bg" className="w-full h-full object-cover object-bottom" />
                 </div>
             </div>
+            <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
         </div>
     )
 }

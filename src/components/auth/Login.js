@@ -5,6 +5,8 @@ import logo from "../../assets/images/logo.png"
 import topCircle from "../../assets/images/top-circle.png"
 import bottomCircle from "../../assets/images/bottom-circle.png";
 import { baseurl } from '../../api/baseurl';
+import { ToastContainer, toast } from 'react-toastify';
+
 import axios from 'axios';
 
 const Login = () => {
@@ -20,14 +22,18 @@ const Login = () => {
 		data.preventDefault();
 		try {
 			const response = await axios.post(`${baseurl}/api/user/login-admin`, { email: userData.email, password: userData.password });
-			
             if(response.data?.Status){
-                localStorage.clear();
-                localStorage.setItem("Token", response.data?.Data.token);
-                navigate("../dashboard")
+                toast.success("Login successfully.");
+                setTimeout(() => {
+                    localStorage.clear();
+                    localStorage.setItem("Token", response.data?.Data.token);
+                    navigate("../dashboard")
+                }, 1000);
+            } else {
+				toast.error("Something went wrong!!");  
             }
 		} catch (error) {
-            console.log('Something went wrong!!!');
+            toast.error("Something went wrong!!");
 			setError(true);
 		}
 	}
@@ -47,7 +53,7 @@ const Login = () => {
                     <div className="max-w-md w-full m-auto">
                         <h1>Welcome back</h1>
                         <p className="text-lg text-[#64748B] font-normal sm:pt-3.5 xl:pr-8">Welcome back! Please enter your details</p>
-                        <small className='text-[#FB7181] text-xs font-semibold leading-4'>Invalid Mobile or Password Please Try Again!</small>
+                        {/* <small className='text-[#FB7181] text-xs font-semibold leading-4'>Invalid Mobile or Password Please Try Again!</small> */}
                         <div className="w-full pt-7 sm:pt-9">
                             <form className="space-y-5">
                                 <div>
@@ -77,6 +83,18 @@ const Login = () => {
                     <img src={bgImage} alt="login-bg" className="w-full h-full object-cover object-bottom" />
                 </div>
             </div>
+            <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
         </div>
     )
 }

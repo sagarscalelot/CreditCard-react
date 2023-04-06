@@ -1,1 +1,1 @@
-export const baseurl = "http://192.168.29.248:8000"
+export const baseurl = "https://pratik-creditmanagement.onrender.com"

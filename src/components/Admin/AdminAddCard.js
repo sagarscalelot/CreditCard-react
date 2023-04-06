@@ -6,6 +6,7 @@ import { baseurl } from '../../api/baseurl';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
 
 function AdminAddCard() {
 
@@ -26,13 +27,15 @@ function AdminAddCard() {
 		card_exp_date: "",
 		card_cvv: "",
 		due_date: "",
-		due_amount: ""
+		due_amount: "",
+		card_network:"",
 	}
 	const ValidationSchema = Yup.object().shape({
 		card_bank_name: Yup.string().required('Bank name is required*'),
 		card_type: Yup.string().required('Card type is required*'),
 		card_number: Yup.string().test('len', 'Must be exactly 12 characters', val => val.length === 12).required('Card number is required*'),
 		card_holder_name: Yup.string().required('Card holder name is required*'),
+		card_network:Yup.string().required('Card Network is required*'),
 		card_photo: Yup.string().required('Card photo is required*'),
 		card_exp_date: Yup.date().required('Expiry date is required*'),
 		card_cvv: Yup.string().test('len', 'Must be exactly 3 characters', val => val.length === 3).required('Cvv is required*'),
@@ -47,22 +50,24 @@ function AdminAddCard() {
 
 	const clickNextHandler = async (values) => {
 		const requestObj = { ...values};
-		console.log("values >> ", header);
+		// console.log("values >> ", {requestObj});
 		try {
 			const response = await axios.post(`${baseurl}/api/cards/add-card`, requestObj, { headers: header });
 			console.log("Personal details > ", response.data);
 			
-			if (response.data.status) {
-				console.log("success");
+			if (response.data.Status) {
+				toast.success(response.data.Message);
 				// toast.success(response.data.Message);
 				// dispatch(increment());
-				navigate(`../admincards`);
+				setTimeout(() => {
+					navigate(`../admincards`);
+				}, 1000);
 			} else {
+				toast.error("Something went wrong!!");
 				console.log("error");
-				// toast.error(response.data.Message);
 			}
 		} catch (error) {
-			// toast.error("Something Went Wrong.");
+			toast.error("Something Went Wrong.");
 			// navigate(`/auth/login`);
 			console.log(error);
 		}
@@ -141,12 +146,17 @@ function AdminAddCard() {
 								<small className="text-red-500 text-xs">{formik.errors.card_number}</small>
 							</div>
 							<div className='w-1/2'>
-								<label htmlFor="" className="input-title2">Card holder name</label>
-								<input type="text" name="card_holder_name" className="input_box2 placeholder:text-[#94A3B8] placeholder:text-xl" placeholder='Enter card holder name' required onChange={(e) => setInputValue("card_holder_name", e.target.value)} />
-								<small className="text-red-500 text-xs">{formik.errors.card_holder_name}</small>
+								<label htmlFor="" className="input-title2">Card Network</label>
+								<input type="text" name="card_network" className="input_box2 placeholder:text-[#94A3B8] placeholder:text-xl" placeholder='Enter card network' required onChange={(e) => setInputValue("card_network", e.target.value)} />
+								<small className="text-red-500 text-xs">{formik.errors.card_network}</small>
 							</div>
 						</div>
 						<div className="w-full flex space-x-6 mb-7">
+						 <div className='w-1/2'>
+								<label htmlFor="" className="input-title2">Card holder name</label>
+								<input type="text" name="card_holder_name" className="input_box2 placeholder:text-[#94A3B8] placeholder:text-xl" placeholder='Enter card holder name' required onChange={(e) => setInputValue("card_holder_name", e.target.value)} />
+								<small className="text-red-500 text-xs">{formik.errors.card_holder_name}</small>
+							</div> 
 							<div className='w-1/2'>
 								<label htmlFor="" className="input-title2">Card photo upload</label>
 								<label className='input_box2 flex items-center border-dashed justify-center' htmlFor='card-photo'>
@@ -160,6 +170,13 @@ function AdminAddCard() {
 								<input type="file" name="card_photo" id='card-photo' className="input_box2 placeholder:text-[#94A3B8] placeholder:text-base hidden" placeholder='Card photo upload' required onChange={(e) => setInputValue("card_photo", e.target.value)}/>
 								<small className="text-red-500 text-xs">{formik.errors.card_photo}</small>
 							</div>
+						</div>
+						<div className="w-full flex space-x-6 mb-7">
+							<div className='w-1/2'>
+								<label htmlFor="" className="input-title2">Card CVV</label>
+								<input type="number" name="card_cvv" className="input_box2 placeholder:text-[#94A3B8] placeholder:text-xl" placeholder='Enter cvv' required onChange={(e) => setInputValue("card_cvv", e.target.value)} />
+								<small className="text-red-500 text-xs">{formik.errors.card_cvv}</small>
+							</div>
 							<div className='w-1/2'>
 								<label htmlFor="" className="input-title2 relative">Card Expiry Date</label>
 								<input type="date" name="card_exp_date" className="input_box2 placeholder:text-[#94A3B8] placeholder:text-xl" placeholder='Enter card expiry date' required onChange={(e) => setInputValue("card_exp_date", e.target.value)} />
@@ -169,9 +186,9 @@ function AdminAddCard() {
 						</div>
 						<div className="w-full flex space-x-6 mb-7">
 							<div className='w-1/2'>
-								<label htmlFor="" className="input-title2">Card CVV</label>
-								<input type="number" name="card_cvv" className="input_box2 placeholder:text-[#94A3B8] placeholder:text-xl" placeholder='Enter cvv' required onChange={(e) => setInputValue("card_cvv", e.target.value)} />
-								<small className="text-red-500 text-xs">{formik.errors.card_cvv}</small>
+								<label htmlFor="" className="input-title2">Due amount</label>
+								<input type="number" name="due_amount" className="input_box2 placeholder:text-[#94A3B8] placeholder:text-xl" placeholder='Enter due amount' required onChange={(e) => setInputValue("due_amount", e.target.value)} />
+								<small className="text-red-500 text-xs">{formik.errors.due_amount}</small>
 							</div>
 							<div className='w-1/2'>
 								<label htmlFor="" className="input-title2">Due date</label>
@@ -180,18 +197,23 @@ function AdminAddCard() {
 							</div>
 						</div>
 						<div className="w-full flex space-x-6 mb-7">
-							<div className='w-full'>
-								<label htmlFor="" className="input-title2">Due amount</label>
-								<input type="number" name="due_amount" className="input_box2 placeholder:text-[#94A3B8] placeholder:text-xl" placeholder='Enter due amount' required onChange={(e) => setInputValue("due_amount", e.target.value)} />
-								<small className="text-red-500 text-xs">{formik.errors.due_amount}</small>
-							</div>
-						</div>
-						<div className="w-full flex space-x-6 mb-7">
 							<button type="submit" className="btn-secondary w-full">Add Card</button>
 						</div>
 					</div>
 				</form>
 			</div>
+			<ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
 		</div>
 	)
 }

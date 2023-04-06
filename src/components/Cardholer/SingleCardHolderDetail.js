@@ -1,47 +1,113 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { baseurl } from '../../api/baseurl';
+import axios from 'axios';
+import { ToastContainer } from 'react-toastify';
 
-function SingleCardHolderDetail() {
+function SingleCardHolderDetail({handleClose, details}) {
+
+	const [isDisable, setIsDisable] = useState(true);
+	const token = localStorage.getItem("Token");
+    const header = {
+		'Authorization': `Bearer ${token}`,
+		'Content-Type': 'multipart/form-data'
+    }
+	const initialState = {
+		first_name: "",
+		last_name: "",
+		email: "",
+		phone_no: "",
+		aadhar: "",
+		pan: "",
+		cheque: "",
+	}
+
+	const [values, setValues] = useState(initialState);
+    const changeHandler = (e) => {
+        const { name, value } = e.target;
+        setValues({
+            ...values,
+            [name]: value
+        })
+    }
+
+	useEffect(() => {
+        //    setValues(details)
+        setValues({
+            first_name: details?.first_name,
+            last_name: details?.last_name,
+            email: details?.email,
+            phone_no: details?.phone_no,
+            aadhar: details?.aadhar,
+            pan: details?.pan,
+            cheque: details?.cheque,
+        })
+    }, [details,isDisable])
+
+	const addUserDetails = async () => {
+        try {
+			console.log(values);
+            const response = await axios.put(`${baseurl}/api/user/edit-profile`, values, { headers: header });
+			console.log("edit : ", response);
+            if (response.data.Status) {
+				console.log("success");
+                // toast.success(response.data.Message);
+            } else {
+				console.log("error");
+                // toast.error(response.data.Message);
+            }
+        } catch (error) {
+            console.log(error);
+            // toast.error("Something Went Wrong.");
+        }
+    }
+
 	return (
-		<div className="wrapper min-h-full">
+		<div className="popup table fixed w-full inset-0 z-40 bg-black bg-opacity-75 h-screen">
 			<div className="flex items-center justify-between pb-9">
 				<div className="flex items-center cursor-pointer">
-					<svg width="24" height="16" viewBox="0 0 24 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<svg width="24" height="16" viewBox="0 0 24 16" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={() => handleClose(false)} href="#">
 						<path d="M7.65995 2.41586C8.0277 2.05138 8.03034 1.4578 7.66586 1.09005C7.30139 0.722305 6.7078 0.719657 6.34005 1.08414L4.09664 3.30762C3.25167 4.14505 2.56108 4.82949 2.07132 5.43932C1.56203 6.07348 1.19337 6.71716 1.09489 7.4898C1.0517 7.82858 1.0517 8.17142 1.09489 8.5102C1.19337 9.28284 1.56203 9.92652 2.07132 10.5607C2.56108 11.1705 3.25167 11.855 4.09665 12.6924L6.34005 14.9159C6.7078 15.2803 7.30138 15.2777 7.66586 14.9099C8.03034 14.5422 8.02769 13.9486 7.65995 13.5841L5.45624 11.4C4.56187 10.5136 3.94837 9.90353 3.53324 9.38662C3.39833 9.21863 3.29307 9.07075 3.21135 8.9375H22C22.5178 8.9375 22.9375 8.51777 22.9375 8C22.9375 7.48223 22.5178 7.0625 22 7.0625H3.21135C3.29308 6.92925 3.39833 6.78137 3.53324 6.61338C3.94837 6.09647 4.56187 5.48642 5.45624 4.6L7.65995 2.41586Z" fill="#0F172A" stroke="#0F172A" strokeLinecap="round" />
 					</svg>
-					<h3 className="text-yankeesBlue leading-8 pl-4">Olivia Smith</h3>
+					<h3 className="text-yankeesBlue leading-8 pl-4">{details.first_name} {details.last_name}</h3>
 				</div>
+				
 				<div className="flex space-x-3">
-					<Link to='' className="btn-gray flex">
+					<Link to='../dashboard/admincards' className="btn-gray flex">
 						View Cards
 					</Link>
-					<Link to='' className="btn-secondary flex">
+					{isDisable && <button className="btn-secondary flex" onClick={() => setIsDisable(false)}>Edit Details</button>}
+					{!isDisable && <div className='flex'>
+						<button className="btn-secondary small mr-3" onClick={() => { addUserDetails(); setIsDisable(true) }}>Save</button>
+						<button className="btn-secondary small" onClick={() => setIsDisable(true)}>Cancel</button>
+					</div>}
+					{/* <Link to='' className="btn-secondary flex">
 						Edit Details
-					</Link>
+					</Link> */}
 				</div>
 			</div>
 			<form className='pt-11 space-y-5'>
 				<div className="w-full flex items-center space-x-6">
 					<div className='w-1/2'>
 						<label htmlFor="" className="input-title2">First name</label>
-						<input type="text" name="" className="input_box2 placeholder:text-[#94A3B8] placeholder:text-xl" placeholder='Olivia' required />
+						<input type="text" name="first_name" className="input_box2 placeholder:text-[#94A3B8] placeholder:text-xl" placeholder='Olivia' required value={values?.first_name || ""} onChange={changeHandler} disabled={isDisable} />
 					</div>
 					<div className='w-1/2'>
 						<label htmlFor="" className="input-title2">Last name</label>
-						<input type="text" name="" className="input_box2 placeholder:text-[#94A3B8] placeholder:text-xl" placeholder='Smith' required />
+						<input type="text" name="last_name" className="input_box2 placeholder:text-[#94A3B8] placeholder:text-xl" placeholder='Smith' required value={values?.last_name || ""} onChange={changeHandler} disabled={isDisable} />
 					</div>
 				</div>
 				<div className="w-full flex items-center space-x-6">
 					<div className='w-1/2'>
 						<label htmlFor="" className="input-title2">Email</label>
-						<input type="email" name="" className="input_box2 placeholder:text-[#94A3B8] placeholder:text-xl" placeholder='olivia123@gmail.com' required />
+						<input type="email" name="email" className="input_box2 placeholder:text-[#94A3B8] placeholder:text-xl" placeholder='olivia123@gmail.com' required value={values?.email || ""} onChange={changeHandler} disabled={isDisable} />
 					</div>
 					<div className='w-1/2'>
 						<label htmlFor="" className="input-title2">Phone number</label>
-						<input type="text" name="" className="input_box2 placeholder:text-[#94A3B8] placeholder:text-xl" placeholder='+91 987654321' required />
+						<input type="text" name="phone_no" className="input_box2 placeholder:text-[#94A3B8] placeholder:text-xl" placeholder='+91 987654321' required value={values?.phone_no || ""} onChange={changeHandler} disabled={isDisable} />
 					</div>
 				</div>
-				<div className='w-full flex items-center space-x-6'>
+				{/* <div className='w-full flex items-center space-x-6'>
 					<div className='w-1/2'>
 						<label htmlFor="" className="input-title2">Aadhar card</label>
 						<label className='input_box2 flex items-center border-dashed justify-center' htmlFor='AdharCard-photo'>
@@ -50,7 +116,8 @@ function SingleCardHolderDetail() {
 							</svg>
 							<span className="text-[#94A3B8] font-normal text-xl pl-4">View Aadhar</span>
 						</label>
-						<input type="file" name="" id='AdharCard-photo' className="input_box2 placeholder:text-[#94A3B8] placeholder:text-base hidden" placeholder='Card photo upload' required />
+						<img src={values?.aadhar} alt="Alt Text" className='w-full h-full object-cover rounded-full overflow-hidden p-1' />
+						<input type="text" name="aadhar" id='AdharCard-photo' className="input_box2 placeholder:text-[#94A3B8] placeholder:text-base hidden" placeholder='Card photo upload' accept='image/*' required value={values?.aadhar || ""} onChange={(e) => changeHandler("aadhar", e.currentTarget.files[0])} disabled={isDisable} />
 					</div>
 					<div className='w-1/2'>
 						<label htmlFor="" className="input-title2">Pan card</label>
@@ -60,7 +127,7 @@ function SingleCardHolderDetail() {
 							</svg>
 							<span className="text-[#94A3B8] font-normal text-xl pl-4">View Pan card</span>
 						</label>
-						<input type="file" name="" id='panCard-photo' className="input_box2 placeholder:text-[#94A3B8] placeholder:text-base hidden" placeholder='Card photo upload' required />
+						<input type="text" name="pan" id='panCard-photo' className="input_box2 placeholder:text-[#94A3B8] placeholder:text-base hidden" placeholder='Card photo upload' required value={values?.pan || ""} onChange={changeHandler} disabled={isDisable} />
 					</div>
 				</div>
 				<div className='w-full flex items-center space-x-6'>
@@ -72,10 +139,22 @@ function SingleCardHolderDetail() {
 							</svg>
 							<span className="text-[#94A3B8] font-normal text-xl pl-4">View cheque photo </span>
 						</label>
-						<input type="file" name="" id='cheque-photo' className="input_box2 placeholder:text-[#94A3B8] placeholder:text-base hidden" placeholder='Card photo upload' required />
+						<input type="text" name="cheque" id='cheque-photo' className="input_box2 placeholder:text-[#94A3B8] placeholder:text-base hidden" placeholder='Card photo upload' required value={values?.cheque || ""} onChange={changeHandler} disabled={isDisable} />
 					</div>
-				</div>
+				</div> */}
 			</form>
+			<ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
 		</div>
 	)
 }
